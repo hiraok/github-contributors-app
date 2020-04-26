@@ -1,0 +1,12 @@
+apply plugin: 'com.android.library'
+apply from: rootProject.file("partical_android.gradle")
+
+dependencies {
+    implementation project(":model")
+    implementation 'com.squareup.moshi:moshi:1.9.2'
+    implementation 'com.squareup.okhttp3:okhttp:4.5.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.9.2'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.6.0'
+    implementation "com.squareup.okhttp3:logging-interceptor:4.5.0"
+}
