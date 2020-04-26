@@ -15,15 +15,14 @@ import dagger.android.HasAndroidInjector
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainRecyclerViewAdapter.OnItemClickListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
     private val viewModel by viewModels<MainViewModel> { viewModelFactory }
 
-    private val adapter =
-        MainRecyclerViewAdapter()
+    private var adapter: MainRecyclerViewAdapter? = null
 
     private val binding by lazy {
         DataBindingUtil.setContentView<ActivityMainBinding>(
@@ -40,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun createRecyclerView() {
+        adapter = MainRecyclerViewAdapter(this)
         binding.apply {
             lifecycleOwner = this@MainActivity
             recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
@@ -47,8 +47,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.contributors.observe(this, Observer {
-            adapter.submitList(it)
+            adapter?.submitList(it)
         })
+    }
+
+    override fun onClick(dto: ContributorDetailFragment.DetailDto) {
+        ContributorDetailFragment.show(supportFragmentManager, dto)
     }
 
 }
