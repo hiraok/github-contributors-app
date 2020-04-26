@@ -10,10 +10,9 @@ import com.hiraok.github_contributors_app.R
 import com.hiraok.github_contributors_app.databinding.ItemContributorBinding
 import com.hiraok.github_contributors_app.model.Contributor
 
-class MainRecyclerViewAdapter :
-    PagedListAdapter<Contributor, MainRecyclerViewAdapter.ContributorViewHolder>(
-        callback
-    ) {
+class MainRecyclerViewAdapter(
+    private val clickListener: OnItemClickListener
+) : PagedListAdapter<Contributor, MainRecyclerViewAdapter.ContributorViewHolder>(callback) {
 
     companion object {
         val callback = object : DiffUtil.ItemCallback<Contributor>() {
@@ -35,15 +34,29 @@ class MainRecyclerViewAdapter :
             parent,
             false
         )
-        return ContributorViewHolder(
-            binding
-        )
+
+        return ContributorViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ContributorViewHolder, position: Int) {
-        holder.binding.contributor = getItem(position)
+        val contributor = getItem(position)
+        contributor?.let { data ->
+            holder.binding.contributor = data
+            holder.binding.container.setOnClickListener {
+                clickListener.onClick(
+                    ContributorDetailFragment.DetailDto(
+                        data.id,
+                        data.avatarUrl
+                    )
+                )
+            }
+        }
     }
 
     class ContributorViewHolder(val binding: ItemContributorBinding) :
         RecyclerView.ViewHolder(binding.root)
+
+    interface OnItemClickListener {
+        fun onClick(dto: ContributorDetailFragment.DetailDto)
+    }
 }
